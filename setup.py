@@ -15,5 +15,7 @@ setup(
             'li = license_info:main',
         ],
     },
-    license="Unlicensed (Public Domain)"
+    license="Unlicensed (Public Domain)",
+    tests_require=['mock'],
+    test_suite='tests',
 )
