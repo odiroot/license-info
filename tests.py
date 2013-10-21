@@ -18,7 +18,7 @@ class TestLicenseInfo(unittest.TestCase):
     def test_display(self):
         stream = io.StringIO()
         license_info.display('foobar', '0.9.0', 'MIT', stream=stream)
-        self.assertEqual(stream.getvalue(), 'foobar==0.9.0 #\033[92mMIT\033[0m')
+        self.assertEqual(stream.getvalue(), 'foobar==0.9.0 #\033[92mMIT\033[0m\n')
 
     @mock.patch('license_info.api')
     @mock.patch('license_info.display')

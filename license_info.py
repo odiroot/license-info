@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from pip import get_installed_distributions
 from pkgtools.pypi import PyPIXmlRpc
 import sys
@@ -29,6 +30,7 @@ def display(name, version, license, stream=None):
     stream = stream or DEFAULT_STREAM
     line = get_license_line(name, version, license)
     stream.write(line)
+    stream.write('\n')
 
 
 def display_dist(dist):
