@@ -7,15 +7,15 @@ Show list of installed python packages with version and license info.
 Usage
 -----
 
-Just install package::
+Just install package:
 
     $ pip install license-info
 
 
-... and run it::
+... and run it:
 
     $ li
 
 
-license-info should work properly inside activated virtualenv.
+_license-info_ should work properly inside activated virtualenv.
 
