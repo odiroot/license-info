@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='license-info',
-    version='0.8.1',
+    version='0.8.2',
     description='Show list of installed python packages with version and license info',
     author='Michal Odnous',
     author_email='odi.root@gmail.com',
@@ -15,7 +15,7 @@ setup(
             'li = license_info:main',
         ],
     },
-    license="Unlicensed (Public Domain)",
+    license="BSD",
     tests_require=['mock'],
     test_suite='tests',
 )
