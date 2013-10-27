@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='license-info',
-    version='0.8.2',
+    version='0.8.3',
     description='Show list of installed python packages with version and license info',
     author='Michal Odnous',
     author_email='odi.root@gmail.com',
@@ -16,6 +16,17 @@ setup(
         ],
     },
     license="BSD",
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: POSIX',
+        'Programming Language :: Python',
+        'Topic :: Software Development',
+        'Topic :: Utilities',
+    ],
     tests_require=['mock'],
     test_suite='tests',
 )
