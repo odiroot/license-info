@@ -30,6 +30,6 @@ setup(
         'Topic :: Software Development',
         'Topic :: Utilities',
     ],
-    tests_require=['mock'],
+    tests_require=['mock', 'termcolor'],
     test_suite='tests',
 )
