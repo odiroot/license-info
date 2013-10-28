@@ -10,6 +10,9 @@ setup(
     url='https://github.com/odiroot/license-info',
     py_modules=["license_info"],
     install_requires=["pkgtools", "pip"],
+    extras_require={
+        "colors": ["termcolor"],
+    },
     entry_points={
         'console_scripts': [
             'li = license_info:main',
