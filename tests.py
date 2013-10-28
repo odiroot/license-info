@@ -6,19 +6,31 @@ import mock
 
 
 class TestLicenseInfo(unittest.TestCase):
+    @mock.patch("license_info.USE_TERMCOLOR", False)
+    def test_format_license_raw(self):
+        good = license_info.format_license("qux", True)
+        self.assertEqual(good, "qux")
 
+        bad = license_info.format_license("ham", False)
+        self.assertEqual(bad, "ham")
+
+    def test_format_license_color(self):
+        good = license_info.format_license("foo", True)
+        self.assertEqual(good, "\033[1m\033[32mfoo\033[0m")
+
+        bad = license_info.format_license("bar", False)
+        self.assertEqual(bad, "\033[1m\033[31mbar\033[0m")
+
+    @mock.patch("license_info.format_license", lambda a, b: a)
     def test_get_license_line(self):
         line = license_info.get_license_line('foobar', '0.9.0', 'MIT')
-        self.assertEqual(line, 'foobar==0.9.0 #\033[92mMIT\033[0m')
+        self.assertEqual(line, 'foobar==0.9.0 #MIT')
 
-    def test_get_license_line_bad_license(self):
-        line = license_info.get_license_line('foobar', '0.9.0', 'GPL')
-        self.assertEqual(line, 'foobar==0.9.0 #\033[91mGPL\033[0m')
-
+    @mock.patch("license_info.format_license", lambda a, b: a)
     def test_display(self):
         stream = io.StringIO()
         license_info.display('foobar', '0.9.0', 'MIT', stream=stream)
-        self.assertEqual(stream.getvalue(), 'foobar==0.9.0 #\033[92mMIT\033[0m\n')
+        self.assertEqual(stream.getvalue(), 'foobar==0.9.0 #MIT\n')
 
     @mock.patch('license_info.api')
     @mock.patch('license_info.display')
