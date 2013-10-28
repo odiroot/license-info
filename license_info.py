@@ -1,7 +1,13 @@
 from __future__ import unicode_literals
+import sys
+
 from pip import get_installed_distributions
 from pkgtools.pypi import PyPIXmlRpc
-import sys
+try:
+    import termcolor
+    USE_TERMCOLOR = True
+except ImportError:
+    USE_TERMCOLOR = False
 
 
 api = PyPIXmlRpc()
@@ -19,12 +25,20 @@ GOOD_LICENSES = set([
 ])
 
 
+def format_license(license, ok=True):
+    if USE_TERMCOLOR:
+        return termcolor.colored(
+            license, ok and "green" or "red", attrs=["bold"])
+    return (ok and "\033[92m" or "\033[91m") + license + "\033[0m"
+
+
 def get_license_line(name, version, license):
     ok = license in GOOD_LICENSES
     return ''.join([
         "%s==%s #" % (name, version),
-        (ok and "\033[92m" or "\033[91m") + license + "\033[0m",
+        format_license(license, ok),
     ])
+
 
 def display(name, version, license, stream=None):
     stream = stream or DEFAULT_STREAM
