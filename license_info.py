@@ -29,11 +29,12 @@ def format_license(license, ok=True):
     if USE_TERMCOLOR:
         return termcolor.colored(
             license, ok and "green" or "red", attrs=["bold"])
-    return (ok and "\033[92m" or "\033[91m") + license + "\033[0m"
+    return license
 
 
 def get_license_line(name, version, license):
     ok = license in GOOD_LICENSES
+
     return ''.join([
         "%s==%s #" % (name, version),
         format_license(license, ok),
