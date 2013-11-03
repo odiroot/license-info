@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='license-info',
-    version='0.8.3',
+    version='0.8.4',
     description='Show list of installed python packages with version and license info',
     author='Michal Odnous',
     author_email='odi.root@gmail.com',
