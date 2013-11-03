@@ -26,7 +26,8 @@ GOOD_LICENSES = set([
 
 
 def format_license(license, ok=True):
-    if USE_TERMCOLOR:
+    # Avoid sending garbage to the output when being piped.
+    if USE_TERMCOLOR and sys.stdout.isatty():
         return termcolor.colored(
             license, ok and "green" or "red", attrs=["bold"])
     return license

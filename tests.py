@@ -7,14 +7,29 @@ import mock
 
 class TestLicenseInfo(unittest.TestCase):
     @mock.patch("license_info.USE_TERMCOLOR", False)
-    def test_format_license_raw(self):
+    @mock.patch("sys.stdout")
+    def test_format_license_raw(self, stdout):
         good = license_info.format_license("qux", True)
         self.assertEqual(good, "qux")
 
         bad = license_info.format_license("ham", False)
         self.assertEqual(bad, "ham")
 
-    def test_format_license_color(self):
+    @mock.patch("license_info.USE_TERMCOLOR", True)
+    @mock.patch("sys.stdout")
+    def test_format_license_piped(self, stdout):
+        stdout.isatty.return_value = False
+
+        good = license_info.format_license("foo", True)
+        self.assertEqual(good, "foo")
+
+        bad = license_info.format_license("bar", False)
+        self.assertEqual(bad, "bar")
+
+    @mock.patch("sys.stdout")
+    def test_format_license_color(self, stdout):
+        stdout.isatty.return_value = True
+
         good = license_info.format_license("foo", True)
         self.assertEqual(good, "\033[1m\033[32mfoo\033[0m")
 
