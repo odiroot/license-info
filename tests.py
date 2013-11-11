@@ -113,6 +113,35 @@ class TestLicenseInfo(unittest.TestCase):
         result = license_info.extract_license(info)
         self.assertEqual(result, "BSD License")
 
+    @mock.patch("license_info.api.release_data")
+    def test_fetch_package_info_simple(self, release_data):
+        release_data.return_value = {"name": "foo"}
+        result = license_info.fetch_package_info("foo", "0.1")
+        self.assertEqual(result, {"name": "foo"})
+
+    @mock.patch("license_info.api")
+    def test_fetch_package_info_newest(self, api):
+        def __release_data(name, version):
+            if version == "0.1":
+                return {}
+
+            if version == "0.3":
+                return {"name": "qux"}
+
+        api.release_data.side_effect = __release_data
+        api.package_releases.return_value = ["0.3", "0.2"]
+
+        result = license_info.fetch_package_info("qux", "0.1")
+        self.assertEqual(result, {"name": "qux"})
+
+    @mock.patch("license_info.api")
+    def test_fetch_package_info_missing(self, api):
+        api.release_data.return_value = {}
+        api.package_releases.return_value = []
+
+        result = license_info.fetch_package_info("ham", "0.1")
+        self.assertEqual(result, {})
+
 
 if __name__ == '__main__':
     unittest.main()
