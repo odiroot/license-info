@@ -50,10 +50,12 @@ def display(name, version, license, stream=None):
     stream.write(line)
     stream.write('\n')
 
+
 def find_classifier(classifiers):
     for row in classifiers:
         if row.startswith("License"):
             return row
+
 
 def extract_license(pkg_info):
     # 1st try: raw `license` field.
@@ -68,6 +70,7 @@ def extract_license(pkg_info):
 
     return UNKNOWN_STR
 
+
 def display_dist(dist):
     name, version = dist.project_name, dist.version
 
@@ -75,6 +78,7 @@ def display_dist(dist):
     license = extract_license(info)
 
     display(name, version, license)
+
 
 def main():
     for dist in get_installed_distributions():
