@@ -81,6 +81,29 @@ class TestLicenseInfo(unittest.TestCase):
             mock.call('bar', '2.1.9b', 'GPL 2'),
         ])
 
+    def test_extract_license_unknown(self):
+        empty_case = {}
+        result = license_info.extract_license(empty_case)
+        self.assertEqual(result, "UNKNOWN")
+
+        missing_case = {"name": "some-package", "version": "1.0"}
+        result = license_info.extract_license(missing_case)
+        self.assertEqual(result, "UNKNOWN")
+
+    def test_extract_license_usual(self):
+        info = {"license": "FOOBAR"}
+        result = license_info.extract_license(info)
+        self.assertEqual(result, "FOOBAR")
+
+    def test_extract_license_classifiers(self):
+        info = {"classifiers": [
+            "Topic :: Utilities",
+            "License :: OSI Approved :: BSD License",
+            "Programming Language :: Python",
+        ]}
+        result = license_info.extract_license(info)
+        self.assertEqual(result, "BSD License")
+
 
 if __name__ == '__main__':
     unittest.main()

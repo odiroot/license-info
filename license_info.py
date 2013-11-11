@@ -24,6 +24,8 @@ GOOD_LICENSES = set([
     # ...
 ])
 
+UNKNOWN_STR = "UNKNOWN"
+
 
 def format_license(license, ok=True):
     # Avoid sending garbage to the output when being piped.
@@ -49,11 +51,25 @@ def display(name, version, license, stream=None):
     stream.write('\n')
 
 
+def extract_license(pkg_info):
+    # 1st try: raw `license` field.
+    license = pkg_info.get("license", UNKNOWN_STR).strip()
+    if license != UNKNOWN_STR:
+        return license
+
+    # 2nd try: parsing classifiers.
+    classifiers = pkg_info.get("classifiers", [])
+    matched = filter(lambda c: c.startswith("License"), classifiers)
+    if matched:
+        return matched[0].split("::")[-1].strip()
+
+    return UNKNOWN_STR
+
 def display_dist(dist):
     name, version = dist.project_name, dist.version
 
     info = api.release_data(name, version)
-    license = info.get("license", "UNKNOWN").strip()
+    license = extract_license(info)
 
     display(name, version, license)
 
