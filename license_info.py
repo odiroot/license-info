@@ -71,10 +71,25 @@ def extract_license(pkg_info):
     return UNKNOWN_STR
 
 
+def fetch_package_info(name, version):
+    # 1st try: given name, version pair.
+    info = api.release_data(name, version)
+    if info:
+        return info
+
+    # 2nd try: newest version.
+    versions = api.package_releases(name)
+    if versions:
+        return api.release_data(name, versions[0])
+
+    # Simulate unknown package.
+    return {}
+
+
 def display_dist(dist):
     name, version = dist.project_name, dist.version
 
-    info = api.release_data(name, version)
+    info = fetch_package_info(name, version)
     license = extract_license(info)
 
     display(name, version, license)
