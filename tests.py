@@ -95,14 +95,23 @@ class TestLicenseInfo(unittest.TestCase):
         result = license_info.extract_license(info)
         self.assertEqual(result, "FOOBAR")
 
-    def test_extract_license_classifiers(self):
-        info = {"classifiers": [
-            "Topic :: Utilities",
-            "License :: OSI Approved :: BSD License",
-            "Programming Language :: Python",
-        ]}
-        result = license_info.extract_license(info)
-        self.assertEqual(result, "BSD License")
+    def test_find_classifier(self):
+        empty_case = []
+        result = license_info.find_classifier(empty_case)
+        self.assertEqual(result, None)
+
+        exists_case = ["License :: Ham"]
+        result = license_info.find_classifier(exists_case)
+        self.assertEqual(result, "License :: Ham")
+
+    # def test_extract_license_classifiers(self):
+    #     info = {"classifiers": [
+    #         "Topic :: Utilities",
+    #         "License :: OSI Approved :: BSD License",
+    #         "Programming Language :: Python",
+    #     ]}
+    #     result = license_info.extract_license(info)
+    #     self.assertEqual(result, "BSD License")
 
 
 if __name__ == '__main__':

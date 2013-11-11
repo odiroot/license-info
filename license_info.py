@@ -50,6 +50,10 @@ def display(name, version, license, stream=None):
     stream.write(line)
     stream.write('\n')
 
+def find_classifier(classifiers):
+    for row in classifiers:
+        if row.startswith("License"):
+            return row
 
 def extract_license(pkg_info):
     # 1st try: raw `license` field.
@@ -58,10 +62,9 @@ def extract_license(pkg_info):
         return license
 
     # 2nd try: parsing classifiers.
-    classifiers = pkg_info.get("classifiers", [])
-    matched = filter(lambda c: c.startswith("License"), classifiers)
+    matched = find_classifier(pkg_info.get("classifiers", []))
     if matched:
-        return matched[0].split("::")[-1].strip()
+        return matched.split("::")[-1].strip()
 
     return UNKNOWN_STR
 
