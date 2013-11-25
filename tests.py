@@ -90,6 +90,10 @@ class TestLicenseInfo(unittest.TestCase):
         result = license_info.extract_license(missing_case)
         self.assertEqual(result, "UNKNOWN")
 
+        none_case = {"license": None}
+        result = license_info.extract_license(none_case)
+        self.assertEqual(result, "UNKNOWN")
+
     def test_extract_license_usual(self):
         info = {"license": "FOOBAR"}
         result = license_info.extract_license(info)

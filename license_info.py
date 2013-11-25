@@ -59,7 +59,7 @@ def find_classifier(classifiers):
 
 def extract_license(pkg_info):
     # 1st try: raw `license` field.
-    license = pkg_info.get("license", UNKNOWN_STR).strip()
+    license = (pkg_info.get("license") or UNKNOWN_STR).strip()
     if license != UNKNOWN_STR:
         return license
 
