@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
+from os.path import join
 import sys
+import tempfile
 
 from pip import get_installed_distributions
 from pkgtools.pypi import PyPIXmlRpc
@@ -8,7 +10,11 @@ try:
     USE_TERMCOLOR = True
 except ImportError:
     USE_TERMCOLOR = False
-
+try:
+    import appdirs
+    USE_APPDIRS = True
+except ImportError:
+    USE_APPDIRS = False
 
 api = PyPIXmlRpc()
 
@@ -93,6 +99,14 @@ def display_dist(dist):
     license = extract_license(info)
 
     display(name, version, license)
+
+
+def get_cache_path():
+    if USE_APPDIRS:
+        cache_dir = appdirs.user_cache_dir("license-info", "MO")
+    else:
+        cache_dir = tempfile.gettempdir()
+    return join(cache_dir, "li.db")
 
 
 def main():

@@ -3,6 +3,7 @@ import license_info
 import unittest
 import io
 import mock
+import os.path
 
 
 class TestLicenseInfo(unittest.TestCase):
@@ -145,6 +146,16 @@ class TestLicenseInfo(unittest.TestCase):
 
         result = license_info.fetch_package_info("ham", "0.1")
         self.assertEqual(result, {})
+
+    @mock.patch("license_info.USE_APPDIRS", False)
+    def test_cache_no_appdirs(self):
+        path = license_info.get_cache_path()
+        self.assertEqual(os.path.basename(path), "li.db")
+
+    @mock.patch("license_info.USE_APPDIRS", True)
+    def test_cache_with_appdirs(self):
+        path = license_info.get_cache_path()
+        self.assertEqual(os.path.basename(path), "li.db")
 
 
 if __name__ == '__main__':
