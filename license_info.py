@@ -94,11 +94,16 @@ def fetch_package_info(name, version):
     return {}
 
 
-def display_dist(dist):
+def display_dist(dist, cache=None):
+    cache = {} if cache is None else cache
     name, version = dist.project_name, dist.version
 
-    info = fetch_package_info(name, version)
-    license = extract_license(info)
+    if (name, version) in cache:
+        license = cache[(name, version)]
+    else:
+        info = fetch_package_info(name, version)
+        license = extract_license(info)
+        cache[(name, version)] = license
 
     display(name, version, license)
 
@@ -147,9 +152,12 @@ def read_cache():
 
 
 def main():
-    for dist in get_installed_distributions():
-        display_dist(dist)
+    cache = read_cache()
 
+    for dist in get_installed_distributions():
+        display_dist(dist, cache=cache)
+
+    write_cache(cache)
 
 if __name__ == '__main__':
     main()

@@ -62,7 +62,9 @@ class TestLicenseInfo(unittest.TestCase):
     @mock.patch('license_info.api')
     @mock.patch('license_info.display')
     @mock.patch('license_info.get_installed_distributions')
-    def test_main(self, get_installed_distributions, display, api):
+    @mock.patch('license_info.read_cache')
+    @mock.patch('license_info.write_cache')
+    def test_main(self, write_cache, read_cache, get_installed_distributions, display, api):
         dist1 = mock.Mock()
         dist1.project_name = 'foo'
         dist1.version = '0.9.2'
@@ -74,6 +76,8 @@ class TestLicenseInfo(unittest.TestCase):
         get_installed_distributions.return_value = [dist1, dist2]
 
         api.release_data.return_value = {'license': ' GPL 2  '}
+
+        read_cache.return_value = {}
 
         license_info.main()
 
