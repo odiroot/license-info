@@ -86,6 +86,11 @@ class TestLicenseInfo(unittest.TestCase):
             mock.call('bar', '2.1.9b', 'GPL 2'),
         ])
 
+        write_cache.assert_called_once_with({
+            ("foo", "0.9.2"): "GPL 2",
+            ("bar", "2.1.9b"): "GPL 2",
+        })
+
     def test_extract_license_unknown(self):
         empty_case = {}
         result = license_info.extract_license(empty_case)
