@@ -157,6 +157,16 @@ class TestLicenseInfo(unittest.TestCase):
         path = license_info.get_cache_path()
         self.assertEqual(os.path.basename(path), "li.db")
 
+    def test_packing_unpacking(self):
+        data = {
+            (u"foo", "1.2.3"): "GPL",
+            ("Bar", u"0.1"): "MIT",
+            ("qux-ham", "5"): u"BSD", 
+        }
+
+        result = license_info.unpack_cache(license_info.pack_cache(data))
+        self.assertEqual(set(result), set(data))
+
 
 if __name__ == '__main__':
     unittest.main()

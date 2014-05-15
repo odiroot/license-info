@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
-from os.path import join
+from os import makedirs
+from os.path import join, isdir, dirname
 import sys
+import shelve
 import tempfile
 
 from pip import get_installed_distributions
@@ -106,7 +108,42 @@ def get_cache_path():
         cache_dir = appdirs.user_cache_dir("license-info", "MO")
     else:
         cache_dir = tempfile.gettempdir()
-    return join(cache_dir, "li.db")
+    return str(join(cache_dir, "li.db"))
+
+
+def open_cache_db():
+    cache_path = get_cache_path()
+    cache_dir = dirname(cache_path)
+
+    if not isdir(cache_dir):
+        makedirs(cache_dir)
+
+    return shelve.open(cache_path)
+
+
+def pack_cache(data):
+    return dict(
+        (str(" ".join(k)), v) for k, v in data.items()
+    )
+
+
+def unpack_cache(data):
+    return dict(
+        (tuple(k.split()), v) for k, v in data.items()
+    )
+
+
+def write_cache(data):
+    cache = open_cache_db()
+    cache.update(pack_cache(data))
+    cache.close()
+
+
+def read_cache():
+    cache = open_cache_db()
+    data = dict(cache)
+    cache.close()
+    return unpack_cache(data)
 
 
 def main():
