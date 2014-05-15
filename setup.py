@@ -12,6 +12,7 @@ setup(
     install_requires=["pkgtools", "pip"],
     extras_require={
         "colors": ["termcolor"],
+        "persistence": ["appdirs"],
     },
     entry_points={
         'console_scripts': [
@@ -30,6 +31,6 @@ setup(
         'Topic :: Software Development',
         'Topic :: Utilities',
     ],
-    tests_require=['mock', 'termcolor'],
+    tests_require=['mock', 'termcolor', 'appdirs'],
     test_suite='tests',
 )

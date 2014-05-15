@@ -6,5 +6,5 @@ python:
   - "3.4"
   - "pypy"
 install:
-  - pip install pkgtools termcolor
+  - pip install pkgtools termcolor appdirs
 script: nosetests

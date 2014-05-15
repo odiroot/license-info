@@ -3,6 +3,7 @@ import license_info
 import unittest
 import io
 import mock
+import os.path
 
 
 class TestLicenseInfo(unittest.TestCase):
@@ -61,7 +62,9 @@ class TestLicenseInfo(unittest.TestCase):
     @mock.patch('license_info.api')
     @mock.patch('license_info.display')
     @mock.patch('license_info.get_installed_distributions')
-    def test_main(self, get_installed_distributions, display, api):
+    @mock.patch('license_info.read_cache')
+    @mock.patch('license_info.write_cache')
+    def test_main(self, write_cache, read_cache, get_installed_distributions, display, api):
         dist1 = mock.Mock()
         dist1.project_name = 'foo'
         dist1.version = '0.9.2'
@@ -74,12 +77,19 @@ class TestLicenseInfo(unittest.TestCase):
 
         api.release_data.return_value = {'license': ' GPL 2  '}
 
+        read_cache.return_value = {}
+
         license_info.main()
 
         self.assertEqual(display.call_args_list, [
             mock.call('foo', '0.9.2', 'GPL 2'),
             mock.call('bar', '2.1.9b', 'GPL 2'),
         ])
+
+        write_cache.assert_called_once_with({
+            ("foo", "0.9.2"): "GPL 2",
+            ("bar", "2.1.9b"): "GPL 2",
+        })
 
     def test_extract_license_unknown(self):
         empty_case = {}
@@ -145,6 +155,26 @@ class TestLicenseInfo(unittest.TestCase):
 
         result = license_info.fetch_package_info("ham", "0.1")
         self.assertEqual(result, {})
+
+    @mock.patch("license_info.USE_APPDIRS", False)
+    def test_cache_no_appdirs(self):
+        path = license_info.get_cache_path()
+        self.assertEqual(os.path.basename(path), "li.db")
+
+    @mock.patch("license_info.USE_APPDIRS", True)
+    def test_cache_with_appdirs(self):
+        path = license_info.get_cache_path()
+        self.assertEqual(os.path.basename(path), "li.db")
+
+    def test_packing_unpacking(self):
+        data = {
+            (u"foo", "1.2.3"): "GPL",
+            ("Bar", u"0.1"): "MIT",
+            ("qux-ham", "5"): u"BSD", 
+        }
+
+        result = license_info.unpack_cache(license_info.pack_cache(data))
+        self.assertEqual(set(result), set(data))
 
 
 if __name__ == '__main__':

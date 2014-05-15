@@ -1,5 +1,9 @@
 from __future__ import unicode_literals
+from os import makedirs
+from os.path import join, isdir, dirname
 import sys
+import shelve
+import tempfile
 
 from pip import get_installed_distributions
 from pkgtools.pypi import PyPIXmlRpc
@@ -8,7 +12,11 @@ try:
     USE_TERMCOLOR = True
 except ImportError:
     USE_TERMCOLOR = False
-
+try:
+    import appdirs
+    USE_APPDIRS = True
+except ImportError:
+    USE_APPDIRS = False
 
 api = PyPIXmlRpc()
 
@@ -86,19 +94,70 @@ def fetch_package_info(name, version):
     return {}
 
 
-def display_dist(dist):
+def display_dist(dist, cache=None):
+    cache = {} if cache is None else cache
     name, version = dist.project_name, dist.version
 
-    info = fetch_package_info(name, version)
-    license = extract_license(info)
+    if (name, version) in cache:
+        license = cache[(name, version)]
+    else:
+        info = fetch_package_info(name, version)
+        license = extract_license(info)
+        cache[(name, version)] = license
 
     display(name, version, license)
 
 
-def main():
-    for dist in get_installed_distributions():
-        display_dist(dist)
+def get_cache_path():
+    if USE_APPDIRS:
+        cache_dir = appdirs.user_cache_dir("license-info", "MO")
+    else:
+        cache_dir = tempfile.gettempdir()
+    return str(join(cache_dir, "li.db"))
 
+
+def open_cache_db():
+    cache_path = get_cache_path()
+    cache_dir = dirname(cache_path)
+
+    if not isdir(cache_dir):
+        makedirs(cache_dir)
+
+    return shelve.open(cache_path)
+
+
+def pack_cache(data):
+    return dict(
+        (str(" ".join(k)), v) for k, v in data.items()
+    )
+
+
+def unpack_cache(data):
+    return dict(
+        (tuple(k.split()), v) for k, v in data.items()
+    )
+
+
+def write_cache(data):
+    cache = open_cache_db()
+    cache.update(pack_cache(data))
+    cache.close()
+
+
+def read_cache():
+    cache = open_cache_db()
+    data = dict(cache)
+    cache.close()
+    return unpack_cache(data)
+
+
+def main():
+    cache = read_cache()
+
+    for dist in get_installed_distributions():
+        display_dist(dist, cache=cache)
+
+    write_cache(cache)
 
 if __name__ == '__main__':
     main()
